@@ -1,0 +1,192 @@
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JMenu;
+import java.awt.Font;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
+
+public class Ratings extends JFrame {
+	private JTable table;
+	private JTextField textField_3;
+	private JTextField textField;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Ratings frame = new Ratings();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Ratings() {
+		getContentPane().setBackground(Color.LIGHT_GRAY);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1148, 704);
+		getContentPane().setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("RATINGS");
+		lblNewLabel.setFont(new Font("Algerian", Font.BOLD, 40));
+		lblNewLabel.setBounds(407, 38, 208, 48);
+		getContentPane().add(lblNewLabel);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(474, 128, 618, 382);
+		getContentPane().add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JLabel lblCid = new JLabel("CID");
+		lblCid.setFont(new Font("Century Gothic", Font.ITALIC, 25));
+		lblCid.setBounds(34, 203, 84, 25);
+		getContentPane().add(lblCid);
+		
+		textField_3 = new JTextField();
+		textField_3.setBounds(160, 198, 292, 43);
+		getContentPane().add(textField_3);
+		textField_3.setColumns(10);
+		
+		JButton btnReset = new JButton("RESET");
+		btnReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				textField_3.setText(null);
+				textField.setText(null);
+			}
+		});
+		btnReset.setFont(new Font("Book Antiqua", Font.ITALIC, 23));
+		btnReset.setBounds(252, 615, 115, 29);
+		getContentPane().add(btnReset);
+		
+		JButton btnView = new JButton("VIEW");
+		btnView.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try 
+				{
+					Class.forName("oracle.jdbc.driver.OracleDriver");
+				        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+					
+					String query="select * from RATINGS";
+					PreparedStatement pst1=con.prepareStatement(query);
+					ResultSet rs=pst1.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+
+			}
+		});
+		btnView.setFont(new Font("Book Antiqua", Font.ITALIC, 23));
+		btnView.setBounds(407, 615, 115, 29);
+		getContentPane().add(btnView);
+		
+		JButton btnDelete = new JButton("DELETE");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				int row = table.getSelectedRow();
+							System.out.println(row);
+							String cell = table.getModel().getValueAt(row, 0).toString();
+							String query="delete from RATINGS where CID='"+cell+"'";
+							System.out.println(query);
+							
+							
+							try 
+							{
+								Class.forName("oracle.jdbc.driver.OracleDriver");
+						        	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+						        					
+								PreparedStatement pst2=con.prepareStatement(query);
+								pst2.executeQuery();
+								JOptionPane.showMessageDialog(null,"Row Deleted Successful");
+							}
+							catch (Exception e) 
+							{
+								e.printStackTrace();
+							}
+
+			}
+		});
+		btnDelete.setFont(new Font("Book Antiqua", Font.ITALIC, 23));
+		btnDelete.setBounds(578, 615, 133, 29);
+		getContentPane().add(btnDelete);
+		
+		JLabel lblFeedback = new JLabel("FEEDBACK");
+		lblFeedback.setFont(new Font("Century Gothic", Font.ITALIC, 25));
+		lblFeedback.setBounds(15, 305, 133, 29);
+		getContentPane().add(lblFeedback);
+		
+		textField = new JTextField();
+		textField.setBounds(160, 305, 292, 37);
+		getContentPane().add(textField);
+		textField.setColumns(10);
+		
+		JButton btnAdd = new JButton("ADD");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				 String CID = textField_3.getText();
+				   String FEEDBACK = textField.getText();
+				   
+				    try {
+				        Class.forName("oracle.jdbc.driver.OracleDriver");
+				        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+				        
+				        String sql = "Insert Into RATINGS values('"+CID+"','"+FEEDBACK+"')";
+				        PreparedStatement pst=con.prepareStatement(sql);
+				        ResultSet rs=pst.executeQuery();
+				        JOptionPane.showMessageDialog(null,	"Data Inserted Successfully");
+				       		       
+				    } catch(Exception e) {System.out.println(e);
+				}
+			}
+		});
+		btnAdd.setFont(new Font("Book Antiqua", Font.ITALIC, 23));
+		btnAdd.setBounds(85, 615, 97, 29);
+		getContentPane().add(btnAdd);
+		
+		JButton btnNewButton = new JButton("EXIT");
+		btnNewButton.setFont(new Font("Book Antiqua", Font.BOLD | Font.ITALIC, 25));
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+				Home.main(new String[] {});
+
+			}
+		});
+		btnNewButton.setBackground(new Color(102, 204, 204));
+		btnNewButton.setBounds(873, 597, 115, 43);
+		getContentPane().add(btnNewButton);
+	}
+}

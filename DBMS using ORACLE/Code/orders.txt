@@ -1,0 +1,285 @@
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JMenu;
+import java.awt.Font;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import java.awt.Color;
+import javax.swing.event.MenuListener;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.event.MenuEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
+
+public class Orders extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField textField;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JTextField textField_4;
+	private JTable table;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Orders frame = new Orders();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Orders() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1341, 714);
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu mnNewMenu_1 = new JMenu("Customer");
+		mnNewMenu_1.addMenuListener(new MenuListener() {
+			public void menuCanceled(MenuEvent arg0) {
+			}
+			public void menuDeselected(MenuEvent arg0) {
+			}
+			public void menuSelected(MenuEvent arg0) {
+				dispose();
+				customer.main(new String[] {});
+			}});
+		
+		mnNewMenu_1.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		menuBar.add(mnNewMenu_1);
+		
+		JMenu mnNewMenu_2 = new JMenu("Item");
+		mnNewMenu_2.addMenuListener(new MenuListener() {
+			public void menuCanceled(MenuEvent arg0) {
+			}
+			public void menuDeselected(MenuEvent arg0) {
+			}
+			public void menuSelected(MenuEvent arg0) {
+				dispose();
+				Item.main(new String[] {});
+			}
+		});
+		mnNewMenu_2.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		menuBar.add(mnNewMenu_2);
+		
+		JMenu mnNewMenu_3 = new JMenu("Employee");
+		mnNewMenu_3.addMenuListener(new MenuListener() {
+			public void menuCanceled(MenuEvent arg0) {
+			}
+			public void menuDeselected(MenuEvent arg0) {
+			}
+			public void menuSelected(MenuEvent arg0) {
+				dispose();
+				Employee.main(new String[] {});
+			}
+		});
+		mnNewMenu_3.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		menuBar.add(mnNewMenu_3);
+		
+		JMenu mnNewMenu_4 = new JMenu("Ratings");
+		mnNewMenu_4.addMenuListener(new MenuListener() {
+			public void menuCanceled(MenuEvent arg0) {
+			}
+			public void menuDeselected(MenuEvent arg0) {
+			}
+			public void menuSelected(MenuEvent arg0) {
+				dispose();
+				Ratings.main(new String[] {});
+			}
+		});
+		mnNewMenu_4.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		menuBar.add(mnNewMenu_4);
+		contentPane = new JPanel();
+		contentPane.setBackground(Color.LIGHT_GRAY);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblOrderDetails = new JLabel("ORDER");
+		lblOrderDetails.setFont(new Font("Algerian", Font.BOLD, 35));
+		lblOrderDetails.setBounds(490, 13, 140, 44);
+		contentPane.add(lblOrderDetails);
+		
+		JLabel lblOrdNo = new JLabel("ORDNO");
+		lblOrdNo.setFont(new Font("Century Gothic", Font.PLAIN, 25));
+		lblOrdNo.setBounds(12, 137, 97, 36);
+		contentPane.add(lblOrdNo);
+		
+		JLabel lblTotalPrice = new JLabel("TOTAL_PRICE");
+		lblTotalPrice.setFont(new Font("Century Gothic", Font.PLAIN, 25));
+		lblTotalPrice.setBounds(0, 198, 164, 47);
+		contentPane.add(lblTotalPrice);
+		
+		JLabel lblCid = new JLabel("CID");
+		lblCid.setFont(new Font("Century Gothic", Font.PLAIN, 25));
+		lblCid.setBounds(25, 275, 97, 36);
+		contentPane.add(lblCid);
+		
+		JLabel lblItemid = new JLabel("ITEMID");
+		lblItemid.setFont(new Font("Century Gothic", Font.PLAIN, 25));
+		lblItemid.setBounds(12, 353, 97, 28);
+		contentPane.add(lblItemid);
+		
+		textField = new JTextField();
+		textField.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textField.setBounds(176, 136, 248, 44);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		textField_2 = new JTextField();
+		textField_2.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textField_2.setBounds(176, 202, 248, 44);
+		contentPane.add(textField_2);
+		textField_2.setColumns(10);
+		
+		textField_3 = new JTextField();
+		textField_3.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textField_3.setBounds(176, 271, 248, 50);
+		contentPane.add(textField_3);
+		textField_3.setColumns(10);
+		
+		textField_4 = new JTextField();
+		textField_4.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textField_4.setBounds(176, 348, 248, 44);
+		contentPane.add(textField_4);
+		textField_4.setColumns(10);
+		
+		JButton btnReset = new JButton("RESET");
+		btnReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				textField.setText(null);
+				textField_2.setText(null);
+				textField_3.setText(null);
+				textField_4.setText(null);
+			}
+		});
+		btnReset.setFont(new Font("Colonna MT", Font.ITALIC, 27));
+		btnReset.setBounds(232, 534, 115, 29);
+		contentPane.add(btnReset);
+		
+		JButton btnView = new JButton("VIEW");
+		btnView.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try 
+				{
+					Class.forName("oracle.jdbc.driver.OracleDriver");
+				        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+					
+					String query="select * from Orders";
+					PreparedStatement pst1=con.prepareStatement(query);
+					ResultSet rs=pst1.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+
+			}
+		});
+		btnView.setFont(new Font("Colonna MT", Font.ITALIC, 27));
+		btnView.setBounds(400, 534, 115, 29);
+		contentPane.add(btnView);
+		
+		JButton btnDelete = new JButton("DELETE");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+							int row = table.getSelectedRow();
+							System.out.println(row);
+							String cell = table.getModel().getValueAt(row, 0).toString();
+							String query="delete from ORDERS where ORDNO='"+cell+"'";
+							System.out.println(query);
+							
+							
+							try 
+							{
+								Class.forName("oracle.jdbc.driver.OracleDriver");
+						        	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+						        					
+								PreparedStatement pst2=con.prepareStatement(query);
+								pst2.executeQuery();
+								JOptionPane.showMessageDialog(null,"Row Deleted Successful");
+							}
+							catch (Exception e) 
+							{
+								e.printStackTrace();
+							}
+			}
+		});
+		btnDelete.setFont(new Font("Colonna MT", Font.ITALIC, 27));
+		btnDelete.setBounds(562, 534, 130, 29);
+		contentPane.add(btnDelete);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(591, 85, 703, 396);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JButton btnSubmit = new JButton("SUBMIT");
+		btnSubmit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String ORDNO = textField.getText();
+				   String  TOTAL_PRICE= textField_2.getText();
+				   String CID = textField_3.getText();
+				   String ITEMID = textField_4.getText();
+				    try {
+				        Class.forName("oracle.jdbc.driver.OracleDriver");
+				        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+				        
+				        String sql = "Insert Into ORDERS values('"+ORDNO+"','"+TOTAL_PRICE+"','"+CID+"','"+ITEMID+"')";
+				        PreparedStatement pst=con.prepareStatement(sql);
+				        ResultSet rs=pst.executeQuery();
+				        JOptionPane.showMessageDialog(null,	"Data Inserted Successfully");
+				       		       
+				    } catch(Exception e) {System.out.println(e);
+				}
+			}
+		});
+		btnSubmit.setFont(new Font("Colonna MT", Font.ITALIC, 27));
+		btnSubmit.setBounds(63, 534, 130, 29);
+		contentPane.add(btnSubmit);
+		
+		JButton btnNext = new JButton("NEXT");
+		btnNext.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+				Employee.main(new String[] {});
+
+			}
+		});
+		btnNext.setFont(new Font("Colonna MT", Font.BOLD | Font.ITALIC, 27));
+		btnNext.setBounds(868, 530, 115, 36);
+		contentPane.add(btnNext);
+	}
+}
+	

@@ -1,0 +1,275 @@
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JMenu;
+import java.awt.Font;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JTable;
+import java.awt.Color;
+import javax.swing.event.MenuListener;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.event.MenuEvent;
+import javax.swing.JScrollPane;
+
+public class Employee extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JTable table;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Employee frame = new Employee();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Employee() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1037, 689);
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu mnOrder = new JMenu("Order");
+		mnOrder.addMenuListener(new MenuListener() {
+			public void menuCanceled(MenuEvent arg0) {
+			}
+			public void menuDeselected(MenuEvent arg0) {
+			}
+			public void menuSelected(MenuEvent arg0) {
+				dispose();
+				Orders.main(new String[] {});
+			}
+		});
+		mnOrder.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		menuBar.add(mnOrder);
+		
+		JMenu mnItem = new JMenu("Item");
+		mnItem.addMenuListener(new MenuListener() {
+			public void menuCanceled(MenuEvent arg0) {
+			}
+			public void menuDeselected(MenuEvent arg0) {
+			}
+			public void menuSelected(MenuEvent arg0) {
+				dispose();
+				Item.main(new String[] {});
+			}
+		});
+		mnItem.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		menuBar.add(mnItem);
+		
+		JMenu mnRatings = new JMenu("Ratings");
+		mnRatings.addMenuListener(new MenuListener() {
+			public void menuCanceled(MenuEvent arg0) {
+			}
+			public void menuDeselected(MenuEvent arg0) {
+			}
+			public void menuSelected(MenuEvent arg0) {
+				dispose();
+				Ratings.main(new String[] {});
+			}
+		});
+		mnRatings.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		menuBar.add(mnRatings);
+		contentPane = new JPanel();
+		contentPane.setBackground(Color.LIGHT_GRAY);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblEmployeeDetails = new JLabel("EMPLOYEE DETAILS");
+		lblEmployeeDetails.setFont(new Font("Showcard Gothic", Font.BOLD, 35));
+		lblEmployeeDetails.setBounds(271, 13, 373, 59);
+		contentPane.add(lblEmployeeDetails);
+		
+		JLabel lblEmpid = new JLabel("EMP_ID");
+		lblEmpid.setFont(new Font("Comic Sans MS", Font.PLAIN, 23));
+		lblEmpid.setBounds(15, 131, 101, 35);
+		contentPane.add(lblEmpid);
+		
+		JLabel lblName = new JLabel("NAME");
+		lblName.setFont(new Font("Comic Sans MS", Font.PLAIN, 23));
+		lblName.setBounds(15, 208, 69, 27);
+		contentPane.add(lblName);
+		
+		JLabel lblPhoneno = new JLabel("PHONE_NO");
+		lblPhoneno.setFont(new Font("Comic Sans MS", Font.PLAIN, 23));
+		lblPhoneno.setBounds(3, 277, 139, 33);
+		contentPane.add(lblPhoneno);
+		
+		JLabel lblOrdno = new JLabel("ORD_NO");
+		lblOrdno.setFont(new Font("Comic Sans MS", Font.PLAIN, 23));
+		lblOrdno.setBounds(15, 346, 101, 35);
+		contentPane.add(lblOrdno);
+		
+		textField = new JTextField();
+		textField.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textField.setBounds(161, 130, 220, 41);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		textField_1 = new JTextField();
+		textField_1.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textField_1.setBounds(161, 203, 220, 41);
+		contentPane.add(textField_1);
+		textField_1.setColumns(10);
+		
+		textField_2 = new JTextField();
+		textField_2.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textField_2.setBounds(161, 273, 220, 46);
+		contentPane.add(textField_2);
+		textField_2.setColumns(10);
+		
+		textField_3 = new JTextField();
+		textField_3.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textField_3.setBounds(161, 343, 220, 46);
+		contentPane.add(textField_3);
+		textField_3.setColumns(10);
+		
+		JButton btnAdd = new JButton("Add");
+		btnAdd.setFont(new Font("Colonna MT", Font.ITALIC, 25));
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				  String EMP_ID = textField.getText();
+				   String NAME = textField_1.getText();
+				   String PHONE_NO = textField_2.getText();
+				   String ORD_NO = textField_3.getText();
+				    try {
+				        Class.forName("oracle.jdbc.driver.OracleDriver");
+				        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+				        
+				        String sql = "Insert Into EMPLOYEE values('"+EMP_ID+"','"+NAME+"','"+PHONE_NO+"','"+ORD_NO+"')";
+				        PreparedStatement pst=con.prepareStatement(sql);
+				        ResultSet rs=pst.executeQuery();
+				        JOptionPane.showMessageDialog(null,	"Data Inserted Successfully");
+				       		       
+				    } catch(Exception e) {System.out.println(e);
+				}
+
+			}
+			
+		});
+		btnAdd.setBounds(107, 531, 101, 35);
+		contentPane.add(btnAdd);
+		
+		JButton btnReset = new JButton("Reset");
+		btnReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				textField.setText(null);
+				textField_1.setText(null);
+				textField_2.setText(null);
+				textField_3.setText(null);
+			}
+		});
+		btnReset.setFont(new Font("Colonna MT", Font.ITALIC, 25));
+		btnReset.setBounds(290, 532, 115, 32);
+		contentPane.add(btnReset);
+		
+		JButton btnView = new JButton("View");
+		btnView.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try 
+				{
+					Class.forName("oracle.jdbc.driver.OracleDriver");
+				        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+					
+					String query="select * from EMPLOYEE";
+					PreparedStatement pst1=con.prepareStatement(query);
+					ResultSet rs=pst1.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		});
+		btnView.setFont(new Font("Colonna MT", Font.ITALIC, 25));
+		btnView.setBounds(491, 531, 115, 35);
+		contentPane.add(btnView);
+		
+		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int row = table.getSelectedRow();
+				System.out.println(row);
+				String cell = table.getModel().getValueAt(row, 0).toString();
+				String query="delete from EMPLOYEE where EMPID='"+cell+"'";
+				System.out.println(query);
+				
+				
+				try 
+				{
+					Class.forName("oracle.jdbc.driver.OracleDriver");
+			        	Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+			        					
+					PreparedStatement pst2=con.prepareStatement(query);
+					pst2.executeQuery();
+					JOptionPane.showMessageDialog(null,"Row Deleted Successful");
+				}
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+
+			}
+		});
+		btnDelete.setFont(new Font("Colonna MT", Font.ITALIC, 25));
+		btnDelete.setBounds(678, 532, 115, 32);
+		contentPane.add(btnDelete);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(409, 88, 598, 319);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		table.setBackground(Color.WHITE);
+		
+		JButton btnNext = new JButton("NEXT");
+		btnNext.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				dispose();
+				Ratings.main(new String[] {});
+
+			}
+		});
+		btnNext.setFont(new Font("Colonna MT", Font.BOLD | Font.ITALIC, 25));
+		btnNext.setBounds(851, 531, 115, 34);
+		contentPane.add(btnNext);
+	}
+
+}

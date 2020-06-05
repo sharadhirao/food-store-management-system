@@ -1,0 +1,167 @@
+CREATE TABLE CUSTOMER (CID INT,NAME VARCHAR(100),ADDRESS VARCHAR(100),PHNO INT,EMAIL VARCHAR(100))
+CREATE TABLE EMPLOYEE (EMPID INT,NAME VARCHAR(100),PHONENO INT,ADDRESS VARCHAR(100));
+CREATE TABLE ITEM (ITEMID INT,PIZZA_TYPE VARCHAR(100),NAME VARCHAR(100),PRICE INT,TOPPINGS VARCHAR(100));
+CREATE TABLE ORDERS (ORDNO INT,TOTAL_PRICE INT,CID INT,EMPID INT,ITEMID INT);
+CREATE TABLE RATINGS(CID INT,FEEDBACK VARCHAR(100));
+
+ALTER TABLE CUSTOMER ADD CONSTRAINT P11 PRIMARY KEY (CID)
+ALTER TABLE ITEM ADD CONSTRAINT P12 PRIMARY KEY (ITEMID)
+ALTER TABLE ORDERS ADD CONSTRAINT P13 PRIMARY KEY (ORDNO)
+ALTER TABLE EMPLOYEE ADD CONSTRAINT P14 PRIMARY KEY (EMPID)
+ALTER TABLE RATINGS ADD CONSTRAINT P15 PRIMARY KEY (CID)
+
+ALTER TABLE ORDERS ADD CONSTRAINT F11 FOREIGN KEY (CID) REFERENCES CUSTOMER (CID)
+ALTER TABLE ORDERS ADD CONSTRAINT F12 FOREIGN KEY (EMPID) REFERENCES EMPLOYEE (EMPID)
+ALTER TABLE ORDERS ADD CONSTRAINT F13 FOREIGN KEY (ITEMID) REFERENCES ITEM (ITEMID)
+ALTER TABLE RATINGS ADD CONSTRAINT F14 FOREIGN KEY (CID) REFERENCES CUSTOMER (CID)
+
+
+===================
+ADD
+====================
+
+				String CID = textField.getText();
+				   String NAME = textField_1.getText();
+				   String ADDRESS = textField_2.getText();
+				   String PHNO = textField_3.getText();
+				   String EMAIL = textField_4.getText();
+				    try {
+				        Class.forName("oracle.jdbc.driver.OracleDriver");
+				        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+				        
+				        String sql = "Insert Into CUSTOMER values('"+CID+"','"+NAME+"','"+ADDRESS+"','"+PHNO+"','"+EMAIL+"')";
+				        PreparedStatement pst=con.prepareStatement(sql);
+				        ResultSet rs=pst.executeQuery();
+				        JOptionPane.showMessageDialog(null,	"Data Inserted Successfully");
+				       		       
+				    } catch(Exception e) {System.out.println(e);
+				}
+
+============================
+RESET
+============================
+
+			textField.setText(null);
+			nametextField.setText(null);
+			addresstextField.setText(null);
+
+=============================
+VIEW
+=============================
+
+		try 
+				{
+					Class.forName("oracle.jdbc.driver.OracleDriver");
+				        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+					
+					String query="select * from student";
+					PreparedStatement pst1=con.prepareStatement(query);
+					ResultSet rs=pst1.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+
+==============================
+DELETE
+=============================
+
+	JButton btnDelete = new JButton("DELETE");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int row = table.getSelectedRow();
+				System.out.println(row);
+				String cell = table.getModel().getValueAt(row, 0).toString();
+				String query="delete from CUSTOMER where CID='"+cell+"'";
+				System.out.println(query);
+				
+				
+				try 
+				{
+					Class.forName("oracle.jdbc.driver.OracleDriver");
+			        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+			        
+					PreparedStatement pst2=con.prepareStatement(query);
+					pst2.executeQuery();
+					JOptionPane.showMessageDialog(null,"Row Deleted Successful");
+				}
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+
+			}
+		});
+===========================
+NEXT PAGE/PREVIOUS
+===========================
+				dispose();
+				LoginPage.main(new String[] {});
+
+====================================
+comboBox
+====================================
+public void fillComboBox()
+   {
+	   try {
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+	        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","SSS","system");
+
+		String query="select cid from customer";
+		PreparedStatement pst3=con.prepareStatement(query);
+	        ResultSet rs3=pst3.executeQuery();
+	       	   
+	        while(rs3.next())
+	        {
+	        	comboBox.addItem(rs3.getString("cid"));
+	        
+	        }
+	        
+	        String query2="select empid from employee";
+		pst3=con.prepareStatement(query2);
+	        rs3=pst3.executeQuery();
+	       	   
+	        while(rs3.next())
+	        {
+	        	comboBox_1.addItem(rs3.getString("empid"));
+	        	
+	        }
+  		String query3="select itemid from item";
+		pst3=con.prepareStatement(query2);
+	        rs3=pst3.executeQuery();
+	       	   
+	        while(rs3.next())
+	        {
+	        	comboBox_1.addItem(rs3.getString("itemid"));
+	        	
+	        }
+	        con.close();
+	        
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+   }
+
+
+STORED PROCEDURE:
+ 
+
+CREATE OR REPLACE PROCEDURE 'PROC'
+(CID IN INT, NAME IN VARCHAR, ADDRESS IN VARCHAR, PHNO IN INT, EMAIL IN VARCHAR)
+IS BEGIN
+INSERT INTO CUSTOMER VALUES (CID, NAME, ADDRESS, PHNO, EMAIL);
+END;
+
+TRIGGER
+  
+
+CREATE OR REPLACE TRIGGER P_ITEM
+BEFORE INSERT OR UPDATE ON ITEM
+FOR EACH ROW 
+BEGIN
+IF (:NEW.PRICE<=0)
+THEN RAISE_APPLICATION_ERROR (-20001,'INVALID PRICE');
+END IF;
+END;
